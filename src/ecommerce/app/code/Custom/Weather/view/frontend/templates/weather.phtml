@@ -1,0 +1,69 @@
+<?php
+
+/** @var \Custom\Weather\Block\WeatherBlock $block */
+?>
+<?php
+$isData = false;
+$name = '';
+if (!empty($_GET) && !empty($_GET['city'])) {
+    $name = $_GET['city'];
+    $result = $block->getWeatherInformation($_GET['city']);
+    if ($result->cod == '200') {
+        $main = $result->weather[0]['main'];
+        $description = $result->weather[0]['description'];
+        $icon = $result->weather[0]['icon'];
+        $temp = $result->main['temp'] - 273.15;
+        $temp_min = $result->main['temp_min'];
+        $temp_max = $result->main['temp_max'];
+        $umid = $result->main['humidity'];
+        $isData = true;
+    }
+}
+?>
+
+<style>
+    #show_weather {
+        letter-spacing: 1px;
+    }
+
+    .page-footer {
+        margin-top: 30px !important;
+    }
+
+    .search-btn {
+        padding: 7px 10px;
+        border-radius: 10px;
+        background-color: #000;
+        color: white;
+        transition: 0.2s;
+    }
+
+    .search-btn:hover {
+        background-color: rgb(246, 109, 31);
+    }
+</style>
+
+<div id="show_weather">
+    <form class="search-weather" action="/du-bao-thoi-tiet/" method="GET">
+        <input type="text" placeholder="Nhập tên thành phố" id="search-txt" name="city" value="<?php echo $name ?>">
+        <button button class="search-btn" type="submit" id="weather_button">Xem thời tiết</button> </br>
+        <?php if ($name != '' && !$isData) echo '<i class="text_danger">Không tìm thấy dữ liệu</i>' ?>
+    </form>
+
+    <div class="city-icon">
+        <div class="city-icon-holder">
+            <div id="city-name"><?php if ($isData) echo $name ?></div>
+            <img src="<?php if ($isData) echo 'http://openweathermap.org/img/w/' . $icon . '.png' ?>" alt="" id="icon">
+        </div>
+    </div>
+
+    <div class="temperature">
+        <div class="title">Nhiệt độ</div>
+        <div id="temp"> <?php if ($isData) echo $temp ?>°C</div>
+    </div>
+
+    <div class="humidity">
+        <div class="title">Độ ẩm</div>
+        <div id="humidity-div"> <?php if ($isData) echo $umid ?>%</div>
+    </div>
+</div>
